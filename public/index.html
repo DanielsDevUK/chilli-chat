@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Chilli Chat</title>
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v6.0.0-beta1/css/all.css">
+    <link rel="stylesheet" href="index.css">
+    <link rel="shortcut icon" href="favicon.png" type="image/png">
+</head>
+<body>
+    <div class="container">
+        <div class="child">
+            <div class="child-content">
+               <h1 class="title b"><i class="fa-duotone fa-pepper-hot red"></i> Chilli Chat <i class="fa-duotone fa-pepper-hot red"></i></h1> 
+               <h1 class="subtitle sb"><span id="messageShow" class="subtitle sb">Enter Username</span>
+                   <form id="userForm">  
+                       <input type="text" class="inputt sb" id="inputUsername">
+                   </form>
+               </h1> 
+            </div>
+            
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script>
+        function sessionGenerate() {
+            var result           = '';
+            var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            var charactersLength = characters.length;
+            for ( var i = 0; i < 12; i++ ) {
+                result += characters.charAt(Math.floor(Math.random() * charactersLength));
+            }
+            return result;
+        }
+
+
+        $("#userForm").submit(function(e) {
+            e.preventDefault();
+            var value = document.getElementById('inputUsername').value;
+            var array = value.split(" ");
+            if(array.length != 1){
+                console.log('String to big')
+                document.getElementById('messageShow').innerHTML = 'Your username can only be 1 word'
+                setTimeout(function(){
+                    document.getElementById('messageShow').innerHTML = 'Enter Username'
+                },2000);
+            }else{
+                document.getElementById('inputUsername').value = '';
+                localStorage.setItem("username", `${value}`);
+                var session = sessionGenerate();
+                localStorage.setItem("sessionId", `${session}`);
+                console.log('Logging user in')
+                window.location.href = './chat.html'
+            }
+            
+        });
+    </script>
+</body>
+</html>

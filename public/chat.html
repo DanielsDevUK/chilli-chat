@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Chilli Chat</title>
+    <link rel="stylesheet" href="chat.css">
+    <link rel="shortcut icon" href="favicon.png" type="image/png">
+  </head>
+  <body>
+    <ul id="messages"></ul>
+    <form id="form" action="">
+      <input id="input" autocomplete="off" /><button>Send</button>
+    </form>
+    <script src="/socket.io/socket.io.js"></script>
+
+    <script>
+      var socket = io();
+
+      var messages = document.getElementById('messages');
+      var form = document.getElementById('form');
+      var input = document.getElementById('input');
+
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        if (input.value) {
+          socket.emit('chat message payload', `{"username": "${localStorage.getItem("username")}", "content":"${input.value}", "sessionId": "${localStorage.getItem("sessionId")}"}`);
+          input.value = '';
+        }
+      });
+
+      socket.on('chat message payload', function(payload) {
+        var item = document.createElement('li');
+        var payloadJSON = JSON.parse(payload)
+        if(payloadJSON.sessionId == localStorage.getItem("sessionId")){
+          item.innerHTML = `<span class="author">Me </span><span class="content">- ${payloadJSON.content}</span>`;
+        }else{
+          item.innerHTML = `<span class="author">${payloadJSON.username} - </span><span class="content">${payloadJSON.content}</span>`;
+        }
+        messages.appendChild(item);
+        window.scrollTo(0, document.body.scrollHeight);
+      });
+    </script>
+  </body>
+</html>
