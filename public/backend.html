@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Chilli Chat</title>
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v6.0.0-beta1/css/all.css">
+    <link rel="stylesheet" href="index.css">
+    <link rel="shortcut icon" href="favicon.png" type="image/png">
+</head>
+<body>
+    <div class="container">
+        <div class="child">
+            <div class="child-content">
+               <h1 class="title b"><i class="fa-duotone fa-pepper-hot red"></i> Backend Tools <i class="fa-duotone fa-pepper-hot red"></i></h1> 
+               <h1 class="subtitle sb hidden" id="buttons"><span id="messageShow" class="subtitle sb">Pick a action</span><br>
+                   <button class="danger" onclick="clearAllActive()">Clear all active</button>
+                   <button class="danger" id="sendAllGoogle">Send all Google</button>
+                   <button class="danger" onclick="logoutAll()">Logout all</button>
+                   <button class="danger" onclick="logout()">Logout Me</button>
+               </h1> 
+            </div>
+            
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        function checkAuth(){
+
+            if(!localStorage.getItem('backendToken')){
+                window.location.href = '/backendlogin.html'
+            }else{
+                document.getElementById('buttons').classList.remove('hidden')
+            }
+
+            setTimeout(function() { checkAuth()})
+        }
+
+        checkAuth()
+
+        var socket = io();
+
+        document.getElementById('sendAllGoogle').addEventListener('click', function(e) {
+            socket.emit('sendAllGoogle', `{"backendToken": "${localStorage.getItem('backendToken')}"}`);
+            document.getElementById('messageShow').innerHTML = 'Sending all active clients to google'
+            setTimeout(function(){
+                document.getElementById('messageShow').innerHTML = 'Pick a action'
+            }, 2000)
+        })
+
+        document.getElementById('logoutAll').addEventListener('click', function(e) {
+            socket.emit('logoutAll', `{"backendToken": "${localStorage.getItem('backendToken')}"}`);
+            document.getElementById('messageShow').innerHTML = 'Logging all users out...'
+            setTimeout(function(){
+                document.getElementById('messageShow').innerHTML = 'Pick a action'
+            }, 2000)
+        })
+
+        document.getElementById('clearAllActive').addEventListener('click', function(e) {
+            socket.emit('clearAllActive', `{"backendToken": "${localStorage.getItem('backendToken')}"}`);
+            document.getElementById('messageShow').innerHTML = 'Clearing the chat...'
+            setTimeout(function(){
+                document.getElementById('messageShow').innerHTML = 'Pick a action'
+            }, 2000)
+        })
+
+        function logout(){
+            localStorage.removeItem('backendToken')
+            window.location.href = '/backendLogin.html'
+            document.getElementById('messageShow').innerHTML = 'Logging you out...'
+            
+        }
+    </script>
+</body>
+</html>

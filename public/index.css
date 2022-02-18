@@ -50,6 +50,10 @@ html {
     color: rgb(255, 44, 44);
 }
 
+.hidden {
+    display: none;
+}
+
 .child-content {
     width: 100%;
     height: 100%;
@@ -79,3 +83,23 @@ html {
     border-radius: 15px;
     padding: 0.4rem;
 }
+
+.danger {
+    border: none; 
+    outline: none;
+    font-weight: 600;
+    font-size: 30;
+    padding: 0.4rem;
+    color: white;
+    border: 1px solid white;
+    border-radius: 5px;
+    background-color: rgb(255, 62, 62);
+    transition: 0.2s;
+    cursor: pointer;
+}
+
+.danger:hover {
+    background-color: rgb(148, 29, 29); 
+}
+
+

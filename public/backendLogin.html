@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Chilli Chat</title>
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v6.0.0-beta1/css/all.css">
+    <link rel="stylesheet" href="index.css">
+    <link rel="shortcut icon" href="favicon.png" type="image/png">
+</head>
+<body>
+    <div class="container">
+        <div class="child">
+            <div class="child-content">
+               <h1 class="title b"><i class="fa-duotone fa-pepper-hot red"></i> Chilli Chat <i class="fa-duotone fa-pepper-hot red"></i></h1> 
+               <h1 class="subtitle sb"><span id="messageShow" class="subtitle sb">Enter Backend Password</span>
+                   <form id="userForm">  
+                       <input type="password" class="inputt sb" id="password">
+                   </form>
+               </h1> 
+            </div>
+            
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        var socket = io();
+        $("#userForm").submit(function(e) {
+            e.preventDefault();
+            socket.emit('loginVerification', `{"password":"${document.getElementById('password').value}", "sessionId":"${localStorage.getItem('sessionId')}"}`)
+        })
+        socket.on('loginVerificationReturn', function(payload) {
+            var payloadJSON = JSON.parse(payload)
+            if(payloadJSON.sessionId == localStorage.getItem('sessionId')){
+                if(payloadJSON.result == true){
+                    document.getElementById('password').value = '';
+                    localStorage.setItem("backendToken", `${payloadJSON.backendToken}`);
+                    document.getElementById('messageShow').innerHTML = 'Authenticated, you will be redirected shortly.'
+                    setTimeout(function(){
+                        window.location.href = '/backend.html'
+                    },1000);
+                }else if(payloadJSON.result == false){
+                    document.getElementById('password').value = '';
+                    document.getElementById('messageShow').innerHTML = 'Incorrect password'
+                    setTimeout(function(){
+                        document.getElementById('messageShow').innerHTML = 'Enter Backend Password'
+                    },2000);
+                }
+            }
+        })
+    </script>
+</body>
+</html>

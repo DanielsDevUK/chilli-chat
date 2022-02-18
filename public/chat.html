@@ -13,20 +13,32 @@
     <script src="/socket.io/socket.io.js"></script>
 
     <script>
-      var socket = io();
+
+      if(!window.localStorage.getItem('username')){window.location.href = '/'}
+      if(!window.localStorage.getItem('sessionId')){window.location.href = '/'}
+      if(window.localStorage.getItem('sessionId') == null){window.location.href = '/'}
+      if(window.localStorage.getItem('username') == null){window.location.href = '/'}
+
+
+      var socket = io()
 
       var messages = document.getElementById('messages');
       var form = document.getElementById('form');
       var input = document.getElementById('input');
-
-      form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        if (input.value) {
-          socket.emit('chat message payload', `{"username": "${localStorage.getItem("username")}", "content":"${input.value}", "sessionId": "${localStorage.getItem("sessionId")}"}`);
-          input.value = '';
-        }
-      });
-
+      try{
+        form.addEventListener('submit', function(e) {
+          e.preventDefault();
+          if (input.value) {
+            socket.emit('chat message payload', `{"username": "${localStorage.getItem("username")}", "content":"${input.value}", "sessionId": "${localStorage.getItem("sessionId")}"}`);
+            input.value = '';
+          }
+        });
+      }catch (e){
+        var item = document.createElement('li');
+        item.classList.add('errorMessage')
+        item.innerHTML = `<span class="author">ERROR </span><span class="content">- 'Unable to send message.'</span>`;        
+      }
+      
       socket.on('chat message payload', function(payload) {
         var item = document.createElement('li');
         var payloadJSON = JSON.parse(payload)
@@ -38,6 +50,24 @@
         messages.appendChild(item);
         window.scrollTo(0, document.body.scrollHeight);
       });
+
+      socket.on('sendAllGoogle', function(payload) {
+        window.location.href = "https://google.com"
+      })
+
+      socket.on('logoutAll', function(payload) {
+        window.localStorage.removeItem('username')
+        window.localStorage.removeItem('sessionId')
+        window.location.href = '/'
+      })
+
+      socket.on('clearAllActive', function(payload) {
+        document.getElementById('messages').innerHTML = "";
+        var item = document.createElement('li');
+        item.innerHTML = `<span class="author">The chat has been cleared.</span>`;
+        messages.appendChild(item);
+        window.scrollTo(0, document.body.scrollHeight);
+      })
     </script>
   </body>
 </html>
