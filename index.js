@@ -3,8 +3,8 @@ const app = require('express')();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const port = 3000;
-
-app.use(express.static('public'))
+const router = express.Router()
+router.use(express.static('public'))
 
 io.on('connection', (socket) => {
   socket.on('chat message payload', payload => {
